@@ -1,0 +1,91 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  This template is to deploy kubernetes cluster using kops. It deploys VPC, EC2 instance with kops AMI for cluster builder used to deploy kubernetes cluster using kops
+
+Parameters:
+  AmiId: 
+    Description: AMI to use for stack
+    Type: AWS::EC2::Image::Id
+    Default: ami-2b9b5249
+
+  InstanceType:
+    Description: Instance type to use for nat hosts
+    Type: String
+    Default: t2.micro
+
+  KeyName:
+    Description: SSH Key for Kops Kreator
+    Type: String
+    Default: EC2-KP-Default
+  
+  EcrRepositoryName:
+    Description: Name of ECS/ECR repo for storing adhoc docker images
+    Type: String
+    Default: cybersociety
+  
+  SshCidrRange:
+    Description: Ssh Whitelisting
+    Type: String
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+Metadata:
+  AWS::CloudFormation::Interface:
+      
+    ParameterGroups:
+      - Label:
+          default: Cluster Builder EC2 configuration
+        Parameters:
+          - InstanceType
+          - AmiId
+          - KeyName
+
+Resources:
+  ContainerRegistry:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: 
+        !Ref EcrRepositoryName
+      RepositoryPolicyText: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS: 
+                - "*"
+            Action: 
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
+            
+  VPC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3-ap-southeast-2.amazonaws.com/cybersociety/cf-templates/deployVPC.yaml"
+      Parameters:
+        Name: !Ref AWS::StackName
+        VpcCIDR: 10.60.0.0/16
+        Subnet1CIDR: 10.60.10.0/24
+        Subnet2CIDR: 10.60.20.0/24
+
+  Cluster:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3-ap-southeast-2.amazonaws.com/cybersociety/cf-templates/ec2-k8s-builder.yaml"
+      Parameters:
+        AmiId: !Ref AmiId
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyName
+        Subnets: !GetAtt VPC.Outputs.Subnets
+        VpcId: !GetAtt VPC.Outputs.VpcId
+        AvailabilityZone1: ap-southeast-2a
+        AvailabilityZone2: ap-southeast-2b
+        RepositoryName: !Ref EcrRepositoryName
+        SshCidrRange: !Ref SshCidrRange
