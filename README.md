@@ -1,5 +1,4 @@
-# aws-ec2-k8s
-Kubernetes cluster on AWS created using kops.
+# Kubernetes cluster on AWS created using kops.
 
 
 ### Deploy a cluster builder and subsequent 2 nodes kubernetes cluster within a VPC with 2 subnets
