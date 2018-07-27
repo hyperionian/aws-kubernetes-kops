@@ -25,7 +25,7 @@ Parameters:
     Default: ap-southeast-2b
   KeyName:
     Description: SSH key for instance
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: List<AWS::EC2::KeyPair::KeyName>
     Default: EC2-KP-Default
   RepositoryName:
     Description: ECR URI to store docker images
