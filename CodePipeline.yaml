@@ -8,7 +8,7 @@ Parameters:
 
   GitHubBranch:
     Type: String
-    Default: dev
+    Default: master
 
   GitHubToken:
     Type: String
@@ -24,7 +24,7 @@ Parameters:
 
   AutoScalingGroup:
     Type: String
-    Default: Add the ARN for your ASG created with the K8's cluster.
+    Default: ASG name for the Cluster Builder (Kops) EC2 instance
 
 Resources:
   CodeBuildServiceRole:
