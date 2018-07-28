@@ -4,6 +4,8 @@
 
 [![cloudformation-launch-stack](assets/stack-launch.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=Cluster-Builder&templateURL=http://cybersociety.s3.amazonaws.com/cf-templates/parent-template.yaml)
 
+The template deploys a Kops Linux EC2 instance to create kubernetes cluster with 2 worker nodes (t2.micro) and 1 master node (t2.medium) on the new VPC. NAT gateway is also deployed to enable internet connectivity for the Kops Linux EC2 instance
+
 ## Deploy the CodePipeline
 
 [![cloudformation-launch-stack](assets/stack-launch.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=CodePipeline&templateURL=http://cybersociety.s3.amazonaws.com/cf-templates/CodePipeline.yaml)
