@@ -6,14 +6,14 @@ Parameters:
     Type: AWS::EC2::Image::Id
     Default: ami-1eec247c
   InstanceType:
-    Description: Instance type to use for nat hosts
+    Description: Instance type to use for NAT instance
     Type: String
     Default: t2.micro
   VpcId:
     Description: VPC to create instance
     Type: AWS::EC2::VPC::Id
   Subnets:
-    Description: Subnets for Kops Kreator
+    Description: Subnets for Cluster Builder
     Type: List<AWS::EC2::Subnet::Id>
   AvailabilityZone1:
     Description: ASG az
@@ -51,7 +51,7 @@ Resources:
       Path: "/"
       Policies: 
         - 
-          PolicyName: "privilegepolicy"
+          PolicyName: "privilegedpolicy"
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
